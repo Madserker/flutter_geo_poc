@@ -1,6 +1,7 @@
 import 'dart:async';
  
 import 'package:flutter/material.dart';
+import 'package:flutter_geo_poc/services/http_service.dart';
 import 'package:flutter_geo_poc/services/sql_service.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
@@ -15,6 +16,7 @@ class HomePageScreen extends StatefulWidget {
  
 class _HomePageScreenState extends State<HomePageScreen> {
   final DatabaseService dbService = DatabaseService();
+  final HttpService httpService = HttpService(baseUrl: 'https://jsonplaceholder.typicode.com');
   List<GeofencingIteration> geofencingIterations = [];
   List<String> sqlLogs = [];
   List<String> httpLogs = [];
@@ -50,7 +52,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
       await location.enableBackgroundMode(enable: true);
       location.onLocationChanged.listen((LocationData position) async {
         sqlLogs = [];
-        httpLogs = [];
         await dbService.insertGeofencingIteration(
           {
             'latitude': position.latitude.toString(), 
@@ -58,14 +59,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
             'time': DateTime.fromMillisecondsSinceEpoch(position.time!.toInt()).toString()
           }
         );
-        final geofencingIterations = await dbService.getGeofencingIterations();        
-        setState(() {
-          httpLogs.add("NEW LOCATION:\n   - latitude: ${geofencingIterations[0].latitude.toString()}\n   - longitude: ${geofencingIterations[0].longitude.toString()}\n   - time: ${geofencingIterations[0].date}");
-          for (int i = 0; i < geofencingIterations.length; i++) {
-            sqlLogs.add("NEW LOCATION:\n   - latitude: ${geofencingIterations[i].latitude.toString()}\n   - longitude: ${geofencingIterations[i].longitude.toString()}\n   - time: ${geofencingIterations[i].date}");
-            
-          }
-        });
+        try {
+          final httpServiceResponse = await httpService.getRequest('/posts/1');
+          final geofencingIterations = await dbService.getGeofencingIterations();        
+          setState(() {
+            httpLogs.add("${httpServiceResponse['title']}");
+            for (int i = 0; i < geofencingIterations.length; i++) {
+              sqlLogs.add("NEW LOCATION:\n   - latitude: ${geofencingIterations[i].latitude.toString()}\n   - longitude: ${geofencingIterations[i].longitude.toString()}\n   - time: ${geofencingIterations[i].date}");            
+            }
+          });
+        }
+        catch (e) {
+            httpLogs.add("${e}");
+        }        
       });
     }
  

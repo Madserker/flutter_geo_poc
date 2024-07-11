@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geo_poc/services/http_service.dart';
 import 'package:flutter_geo_poc/services/sql_service.dart';
 import 'package:location/location.dart';
+import 'package:open_settings_plus/core/open_settings_plus.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
+import 'package:url_launcher/url_launcher.dart';
  
  
 class HomePageScreen extends StatefulWidget {
@@ -78,6 +80,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: TextButton(child: Text("OPEN EYE"), onPressed: () => 
+        launchUrl(Uri.parse('com.cotecna.eye://eye')
+      )),
       appBar: AppBar(
         title: const Text('Geofencing POC'),
       ),

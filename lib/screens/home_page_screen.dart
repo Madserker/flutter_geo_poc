@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geo_poc/services/http_service.dart';
 import 'package:flutter_geo_poc/services/sql_service.dart';
 import 'package:location/location.dart';
-import 'package:open_settings_plus/core/open_settings_plus.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
+import 'package:app_settings/app_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
  
  
@@ -34,7 +34,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
     }
  
     startLocationUpdates() async {
-      await permission.Permission.notification.request();
+      await permission.Permission.ignoreBatteryOptimizations.request();
+      await AppSettings.openAppSettings(type: AppSettingsType.settings);
+ 
+      
+      await permission.Permission.notification.request();      
       _serviceEnabled = await location.serviceEnabled();
       if (!_serviceEnabled) {
         _serviceEnabled = await location.requestService();
@@ -62,10 +66,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
           }
         );
         try {
-          final httpServiceResponse = await httpService.getRequest('/posts/1');
+          //final httpServiceResponse = await httpService.getRequest('/posts/1');
           final geofencingIterations = await dbService.getGeofencingIterations();        
           setState(() {
-            httpLogs.add("${httpServiceResponse['title']}");
+            //httpLogs.add("${httpServiceResponse['title']}");
             for (int i = 0; i < geofencingIterations.length; i++) {
               sqlLogs.add("NEW LOCATION:\n   - latitude: ${geofencingIterations[i].latitude.toString()}\n   - longitude: ${geofencingIterations[i].longitude.toString()}\n   - time: ${geofencingIterations[i].date}");            
             }

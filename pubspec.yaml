@@ -17,6 +17,7 @@ dependencies:
   http: ^1.2.1
   app_links: ^6.1.4
   app_settings: ^5.1.1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

@@ -59,5 +59,9 @@ class _MyAppState extends State<MyApp> {
 
   void openAppLink(Uri uri) {
     print("OPEN DEEPLINK");
+    if(uri.queryParameters.containsKey('token')){
+      print('TOKEN: ');
+      print(uri.queryParameters['token']);
+    }
   }
 }

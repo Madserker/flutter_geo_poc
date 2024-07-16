@@ -30,7 +30,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="cotecna" android:host="geo.app" />
+                <data android:scheme="com.cotecna.geo" android:host="app" />
             </intent-filter>
 
         </activity>

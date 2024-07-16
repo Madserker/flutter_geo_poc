@@ -85,7 +85,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: TextButton(child: Text("OPEN EYE"), onPressed: () => 
-        launchUrl(Uri.parse('com.cotecna.eye://eye')
+        launchUrl(Uri.parse('com.cotecna.eye://app')
       )),
       appBar: AppBar(
         title: const Text('Geofencing POC'),

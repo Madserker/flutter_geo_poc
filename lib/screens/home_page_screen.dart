@@ -18,7 +18,7 @@ class HomePageScreen extends StatefulWidget {
  
 class _HomePageScreenState extends State<HomePageScreen> {
   final DatabaseService dbService = DatabaseService();
-  final HttpService httpService = HttpService(baseUrl: 'https://jsonplaceholder.typicode.com');
+  final HttpService httpService = HttpService();
   List<GeofencingIteration> geofencingIterations = [];
   List<String> sqlLogs = [];
   List<String> httpLogs = [];
@@ -66,10 +66,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
           }
         );
         try {
-          //final httpServiceResponse = await httpService.getRequest('/posts/1');
+          final httpServiceResponse = await httpService.getRequest('/users/getAllAddresses', {});
           final geofencingIterations = await dbService.getGeofencingIterations();        
           setState(() {
-            //httpLogs.add("${httpServiceResponse['title']}");
+            httpLogs.add(httpServiceResponse.toString());
             for (int i = 0; i < geofencingIterations.length; i++) {
               sqlLogs.add("NEW LOCATION:\n   - latitude: ${geofencingIterations[i].latitude.toString()}\n   - longitude: ${geofencingIterations[i].longitude.toString()}\n   - time: ${geofencingIterations[i].date}");            
             }

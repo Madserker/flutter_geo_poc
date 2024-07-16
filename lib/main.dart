@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geo_poc/screens/home_page_screen.dart';
+import 'package:flutter_geo_poc/services/http_service.dart';
 import 'package:go_router/go_router.dart';
 
 
@@ -58,10 +59,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void openAppLink(Uri uri) {
-    print("OPEN DEEPLINK");
-    if(uri.queryParameters.containsKey('token')){
-      print('TOKEN: ');
-      print(uri.queryParameters['token']);
-    }
+    HttpService().setUserToken(uri.queryParametersAll['token']?.first ?? "");
   }
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class HttpService {
-  final String baseUrl = 'http://192.168.1.188:5003/api';
+  final String baseUrl = 'https://inspect-qa.cotecna.com/api';
   late String userToken;
 
   static final HttpService _instance = HttpService._internal();

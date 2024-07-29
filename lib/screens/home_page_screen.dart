@@ -35,8 +35,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
  
     startLocationUpdates() async {
       await permission.Permission.ignoreBatteryOptimizations.request();
-      await AppSettings.openAppSettings(type: AppSettingsType.settings);
- 
+
+      // OPPO Y A SABER PHONES TIENEN QUE ACTIVAR OPCION BACKGROUND!
+      //await AppSettings.openAppSettings(type: AppSettingsType.settings);
       
       await permission.Permission.notification.request();      
       _serviceEnabled = await location.serviceEnabled();
@@ -48,14 +49,16 @@ class _HomePageScreenState extends State<HomePageScreen> {
       }
  
       _permissionGranted = await location.hasPermission();
-      if (_permissionGranted == PermissionStatus.denied) {
+      if (_permissionGranted != PermissionStatus.granted) {
         _permissionGranted = await location.requestPermission();
         if (_permissionGranted != PermissionStatus.granted) {
           return;
         }
       }
       await location.changeSettings(distanceFilter: 1);
-      await location.enableBackgroundMode(enable: true);
+
+      await enableBackgroundMode();
+
       location.onLocationChanged.listen((LocationData position) async {
         sqlLogs = [];
         await dbService.insertGeofencingIteration(
@@ -69,16 +72,35 @@ class _HomePageScreenState extends State<HomePageScreen> {
           final httpServiceResponse = await httpService.getRequest('/users/getAllAddresses', {});
           final geofencingIterations = await dbService.getGeofencingIterations();        
           setState(() {
-            httpLogs.add(httpServiceResponse.toString());
+            httpLogs.add("TEST: " + httpServiceResponse.toString());
             for (int i = 0; i < geofencingIterations.length; i++) {
               sqlLogs.add("NEW LOCATION:\n   - latitude: ${geofencingIterations[i].latitude.toString()}\n   - longitude: ${geofencingIterations[i].longitude.toString()}\n   - time: ${geofencingIterations[i].date}");            
             }
           });
         }
         catch (e) {
-            httpLogs.add("${e}");
+            httpLogs.add("TEST: ${e}");
         }        
       });
+    }
+
+    Future<bool> enableBackgroundMode() async {
+      bool bgModeEnabled = await location.isBackgroundModeEnabled();
+      if (bgModeEnabled) {
+        return true;
+      } else {
+        try {
+          await location.enableBackgroundMode();
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+        try {
+          bgModeEnabled = await location.enableBackgroundMode();
+        } catch (e) {
+          debugPrint(e.toString());
+        }
+        return bgModeEnabled;
+      }
     }
  
   @override
@@ -117,7 +139,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   httpLogs.map((log) =>
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(log, style: const TextStyle(color: Colors.red)),
+                      child: Text(log, style: const TextStyle(color: Colors.blue)),
                     )
                   ).toList(),
                 ),
